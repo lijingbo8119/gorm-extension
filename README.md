@@ -1,0 +1,2 @@
+# gorm-extension
+some scopes
