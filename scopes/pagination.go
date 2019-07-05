@@ -55,19 +55,19 @@ func GetPagination(currentPage int, pageSize int, model **gorm.DB, withoutCount 
 }
 
 func PaginationScope(currentPage int, pageSize int, p *Pagination) func(db *gorm.DB) *gorm.DB {
-	var (
-		total  int = 0
-		offset int = 0
-	)
-
-	p.Init(currentPage, pageSize, total)
-
-	if p.CurrentPage != 0 && p.PageSize != 0 {
-		offset = (p.CurrentPage - 1) * p.PageSize
-	}
-
 	return func(db *gorm.DB) *gorm.DB {
-		db.Count(&total)
-		return db.Offset(offset).Limit(p.PageSize)
+		var (
+			total  int = 0
+			offset int = 0
+		)
+
+		p.Init(currentPage, pageSize, total)
+
+		if p.CurrentPage != 0 && p.PageSize != 0 {
+			db.Count(&total)
+			offset = (p.CurrentPage - 1) * p.PageSize
+			return db.Offset(offset).Limit(p.PageSize)
+		}
+		return db
 	}
 }
