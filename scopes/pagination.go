@@ -11,7 +11,7 @@ type Pagination struct {
 	IsLastPage  int `json:"is_last_page"`
 }
 
-func (p *Pagination) Init(currentPage int, pageSize int, total int) {
+func (p *Pagination) init(currentPage int, pageSize int, total int) {
 	if currentPage == 0 {
 		pageSize = 0
 	} else if pageSize == 0 {
@@ -34,36 +34,21 @@ func (p *Pagination) Init(currentPage int, pageSize int, total int) {
 	p.IsLastPage = isLastPage
 }
 
-func GetPagination(currentPage int, pageSize int, model **gorm.DB, withoutCount ...bool) *Pagination {
-	var total int
-
-	if !(len(withoutCount) != 0 && withoutCount[0]) {
-		(*model).Count(&total)
-	} else {
-		total = -1
-	}
-
-	p := &Pagination{}
-	p.Init(currentPage, pageSize, total)
-
-	if p.CurrentPage != 0 && p.PageSize != 0 {
-		offset := (p.CurrentPage - 1) * p.PageSize
-		*model = (*model).Offset(offset).Limit(p.PageSize)
-	}
-
-	return p
-}
-
-func PaginationScope(currentPage int, pageSize int, p *Pagination) func(db *gorm.DB) *gorm.DB {
+func PaginationScope(p *Pagination, currentPage int, pageSize ...int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		var (
-			total  int = 0
-			offset int = 0
+			total     int = 0
+			offset    int = 0
+			_pageSize int = 10
 		)
 
-		p.Init(currentPage, pageSize, total)
+		if len(pageSize) > 0 {
+			_pageSize = pageSize[0]
+		}
 
 		db.Count(&total)
+
+		p.init(currentPage, _pageSize, total)
 
 		if p.CurrentPage != 0 && p.PageSize != 0 {
 			offset = (p.CurrentPage - 1) * p.PageSize
