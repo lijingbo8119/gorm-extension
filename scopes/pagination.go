@@ -34,6 +34,10 @@ func (p *Pagination) init(currentPage int, pageSize int, total int) {
 	p.IsLastPage = isLastPage
 }
 
+func (p *Pagination) Init(currentPage int, pageSize int, total int) {
+	p.init(currentPage, pageSize, total)
+}
+
 func PaginationScope(p *Pagination, currentPage int, pageSize ...int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		var (
