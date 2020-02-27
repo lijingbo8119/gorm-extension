@@ -35,7 +35,7 @@ func Filter(filter map[string]interface{}, model interface{}) func(db *gorm.DB) 
 		for k, v := range filter {
 			hasReplaceMark := strings.Contains(k, "?")
 			if hasReplaceMark {
-				db = db.Where(k, gconv.String(v))
+				db = db.Where(k, v)
 				continue
 			}
 
