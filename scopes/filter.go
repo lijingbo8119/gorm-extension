@@ -56,7 +56,7 @@ func Filter(filter map[string]interface{}, model interface{}) func(db *gorm.DB) 
 			default:
 				for i := 0; i < t.NumField(); i++ {
 					jsonTag := t.Field(i).Tag.Get("json")
-					if jsonTag == k {
+					if jsonTag == K {
 						db = operate(k, v, db)
 					}
 				}
